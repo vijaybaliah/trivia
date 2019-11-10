@@ -45,14 +45,12 @@ class Question(db.Model):
     id = Column(Integer, primary_key=True)
     question = Column(String)
     answer = Column(String)
-    category = Column(String)
     difficulty = Column(Integer)
     category_id = Column(Integer, ForeignKey('categories.id'), nullable=False)
 
     def __init__(self, question, answer, category, difficulty, category_id):
         self.question = question
         self.answer = answer
-        self.category = category
         self.difficulty = difficulty
         self.category_id = category_id
 
@@ -72,7 +70,6 @@ class Question(db.Model):
             'id': self.id,
             'question': self.question,
             'answer': self.answer,
-            'category': self.category,
             'difficulty': self.difficulty
         }
 
@@ -102,3 +99,6 @@ class Category(db.Model):
             'id': self.id,
             'type': self.type
         }
+    
+    def __repr__(self):
+        return f'<Venue {self.id}, {self.type}>'
