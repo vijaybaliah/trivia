@@ -59,13 +59,25 @@ def create_app(test_config=None):
                 "success": False
             }
             return jsonify(result)
-        abort(422)
+        abort(STATUS_UNPROCESSABLE)
     
     @app.route('/categories', methods=['POST'])
     def add_category():
-        category_data = json.loads(request.data.decode('utf-8'))
-        print('category_data: ', category_data)
-        return {}
+        if request.data:
+            category_data = json.loads(request.data.decode('utf-8'))
+            category_object = Category(type=category_data['category_type'])
+            Category.insert(category_object)
+            res = Category.format(category_object)
+            result = {
+                "data": {
+                    "id": res['id'],
+                    "type": res['type']
+                },
+                "statusCode": STATUS_CODE_SUCCESS,
+                "success": True
+            }
+            return jsonify(result)
+        abort(STATUS_UNPROCESSABLE)
 
     '''
   @TODO: 
