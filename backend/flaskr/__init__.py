@@ -45,12 +45,12 @@ def create_app(test_config=None):
     CORS(app, resources={r"*": {"origins": "*"}})
 
     '''
-  @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
-  '''
+    @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
+    '''
 
     '''
-  @TODO: Use the after_request decorator to set Access-Control-Allow
-  '''
+    @TODO: Use the after_request decorator to set Access-Control-Allow
+    '''
     @app.after_request
     def after_request(response):
         response.headers.add('Access-Control-Allow-Headers',
@@ -60,10 +60,10 @@ def create_app(test_config=None):
         return response
 
     '''
-  @TODO: 
-  Create an endpoint to handle GET requests 
-  for all available categories.
-  '''
+    @TODO: 
+    Create an endpoint to handle GET requests 
+    for all available categories.
+    '''
     @app.route('/categories')
     def get_categories():
         categories = Category.query.all()
@@ -104,17 +104,17 @@ def create_app(test_config=None):
         abort(STATUS_UNPROCESSABLE)
 
     '''
-  @TODO: 
-  Create an endpoint to handle GET requests for questions, 
-  including pagination (every 10 questions). 
-  This endpoint should return a list of questions, 
-  number of total questions, current category, categories. 
+    @TODO: 
+    Create an endpoint to handle GET requests for questions, 
+    including pagination (every 10 questions). 
+    This endpoint should return a list of questions, 
+    number of total questions, current category, categories. 
 
-  TEST: At this point, when you start the application
-  you should see questions and categories generated,
-  ten questions per page and pagination at the bottom of the screen for three pages.
-  Clicking on the page numbers should update the questions. 
-  '''
+    TEST: At this point, when you start the application
+    you should see questions and categories generated,
+    ten questions per page and pagination at the bottom of the screen for three pages.
+    Clicking on the page numbers should update the questions. 
+    '''
     @app.route('/questions')
     def get_questions():
         page = request.args.get('page', 1, type=int)
@@ -130,12 +130,12 @@ def create_app(test_config=None):
             return format_result(data, total_count)
         abort(STATUS_UNPROCESSABLE)
     '''
-  @TODO: 
-  Create an endpoint to DELETE question using a question ID. 
+    @TODO: 
+    Create an endpoint to DELETE question using a question ID. 
 
-  TEST: When you click the trash icon next to a question, the question will be removed.
-  This removal will persist in the database and when you refresh the page. 
-  '''
+    TEST: When you click the trash icon next to a question, the question will be removed.
+    This removal will persist in the database and when you refresh the page. 
+    '''
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_question(question_id):
         try:
