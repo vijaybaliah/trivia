@@ -170,7 +170,8 @@ def create_app(test_config=None):
                     "id": res['id'],
                     "question": res['question'],
                     "difficulty": res['difficulty'],
-                    "category_id": res['category_id']
+                    "category_id": res['category_id'],
+                    "answer": res['answer']
                 }
                 total_count = 1
                 return format_result(data, total_count)
