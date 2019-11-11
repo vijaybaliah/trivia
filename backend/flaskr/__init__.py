@@ -69,20 +69,12 @@ def create_app(test_config=None):
         categories = Category.query.all()
         if len(categories):
             data = list(map(Category.format, categories))
-            success = True
             result = {
                 "data": data,
                 "status_code": STATUS_CODE_SUCCESS,
-                "success": success
+                "success": True
             }
-            return jsonify(result)
-        else:
-            result = {
-                "data": [],
-                "status_code": STATUS_CODE_SUCCESS,
-                "success": False
-            }
-            return jsonify(result)
+            return format_result(result)
         abort(STATUS_UNPROCESSABLE)
     
     @app.route('/categories', methods=['POST'])
@@ -92,15 +84,11 @@ def create_app(test_config=None):
             category_object = Category(type=category_data['category_type'])
             Category.insert(category_object)
             res = Category.format(category_object)
-            result = {
-                "data": {
-                    "id": res['id'],
-                    "type": res['type']
-                },
-                "status_code": STATUS_CODE_SUCCESS,
-                "success": True
+            data = {
+                "id": res['id'],
+                "type": res['type']
             }
-            return jsonify(result)
+            return format_result(data)
         abort(STATUS_UNPROCESSABLE)
 
     '''
@@ -142,17 +130,13 @@ def create_app(test_config=None):
             question_object = Question.query.get(question_id)
             Question.delete(question_object)
             res = Question.format(question_object)
-            result = {
-                "data": {
-                    "id": res['id'],
-                    "question": res['question'],
-                    "difficulty": res['difficulty'],
-                    "category_id": res['category_id']
-                },
-                "status_code": STATUS_CODE_SUCCESS,
-                "success": True
+            data = {
+                "id": res['id'],
+                "question": res['question'],
+                "difficulty": res['difficulty'],
+                "category_id": res['category_id']
             }
-            return jsonify(result)
+            return format_result(data)
         except Exception as e:
             print('delete_question: ', e)
             abort(STATUS_UNPROCESSABLE)
