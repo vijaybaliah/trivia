@@ -238,6 +238,23 @@ def create_app(test_config=None):
     one question at a time is displayed, the user is allowed to answer
     and shown whether they were correct or not. 
     '''
+    @app.route('/quizzes', methods=['POST'])
+    def get_quiz_question():
+        request_data = get_request_data(request)
+        if 'previous_questions' in request_data and 'quiz_category'in request_data:
+            previous_questions = request_data['previous_questions']
+            quiz_category = request_data['quiz_category']
+            question_query = Question.query
+
+            if len(previous_questions):
+                question_query = question_query.filter(Question.id.notin_(previous_questions))
+            if 'id' in quiz_category:
+                question_query = question_query.filter(Question.category_id==quiz_category['id'])
+
+            questions_query = question_query.all()
+            result = list(map(Question.format, questions_query))
+            return format_result(result)
+        abort(STATUS_UNPROCESSABLE)
 
     '''
     @TODO: 
@@ -254,7 +271,7 @@ def create_app(test_config=None):
         return jsonify(error_data), STATUS_NOT_FOUND
     
     @app.errorhandler(422)
-    def not_unprocessable(error):
+    def unprocessable(error):
         error_data = {
             "success": False,
             "status_code": STATUS_UNPROCESSABLE,
