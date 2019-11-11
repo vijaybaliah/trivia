@@ -110,13 +110,13 @@ def create_app(test_config=None):
         paginated_questions = paginate_request(Question, page)
         questions = list(map(Question.format, paginated_questions.items))
         total_count = paginated_questions.total
-        if total_count > 0:
+        if len(questions) > 0:
             data = {
                 'categories': categories,
                 'questions': questions,
             }
             return format_result(data, total_count)
-        abort(STATUS_UNPROCESSABLE)
+        abort(STATUS_NOT_FOUND)
     '''
     @TODO: 
     Create an endpoint to DELETE question using a question ID. 
