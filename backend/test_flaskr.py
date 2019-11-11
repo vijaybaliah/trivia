@@ -15,8 +15,11 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
+        self.database_path = "postgres://{}:{}@{}/{}".format('vijay', 'password', 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
+        self.code_success = 200
+        self.code_not_found = 404
+        self.code_unprocessable = 422
 
         # binds the app to the current context
         with self.app.app_context():
@@ -29,11 +32,58 @@ class TriviaTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
+
+    def format_response(self, response):
+        return json.loads(response.data)
     """
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
 
+    def test_get_categories(self):
+        res = self.client().get('/categories')
+        data = self.format_response(res)
+        self.assertEqual(res.status_code, self.code_success)
+        self.assertTrue(data['success'])
+
+
+    def test_get_questions(self):
+        res = self.client().get('/questions')
+        data = self.format_response(res)
+        self.assertDictEqual(data['data']['categories'][0], 
+            {'id': 1, 'type': 'category1'}
+        )
+        self.assertEqual(res.status_code, self.code_success)
+        self.assertTrue(data['success'])
+
+    def test_404_get_questions(self):
+        res = self.client().get('/questions?page=100')
+        data = self.format_response(res)
+        self.assertEqual(res.status_code, self.code_not_found)
+        self.assertFalse(data['success'])
+    
+    def test_add_question(self):
+        mock_data = {
+            'question': 'test',
+            'answer': 'test2',
+            'difficulty': 1,
+            'category_id': 1
+        }
+        res = self.client().post('/questions', json=mock_data)
+        data = self.format_response(res)
+        self.assertEqual(data['data']['question'], mock_data['question'])
+        self.assertEqual(res.status_code, self.code_success)
+        self.assertTrue(data['success'])
+    
+    def test_422_add_question(self):
+        mock_data = {
+            'difficulty': 1,
+            'category_id': 1
+        }
+        res = self.client().post('/questions', json=mock_data)
+        data = self.format_response(res)
+        self.assertEqual(res.status_code, self.code_unprocessable)
+        self.assertFalse(data['success'])
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
