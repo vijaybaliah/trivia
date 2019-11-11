@@ -212,6 +212,19 @@ def create_app(test_config=None):
     categories in the left column will cause only questions of that 
     category to be shown. 
     '''
+    @app.route('/categories/<int:category_id>/questions')
+    def get_questions_by_category_id(category_id):
+        questions_query = Category.query.get(category_id).questions
+        questions = list(map(Question.format, questions_query))
+        page = request.args.get('page', 1, type=int)
+        start = (page - 1) * PER_PAGE
+        end = start + PER_PAGE
+        data = questions[start:end]
+        if len(data):
+            total_count = len(questions)
+            return format_result(data, total_count)
+        abort(STATUS_NOT_FOUND)
+
 
     '''
     @TODO: 
