@@ -69,12 +69,7 @@ def create_app(test_config=None):
         categories = Category.query.all()
         if len(categories):
             data = list(map(Category.format, categories))
-            result = {
-                "data": data,
-                "status_code": STATUS_CODE_SUCCESS,
-                "success": True
-            }
-            return format_result(result)
+            return format_result(data)
         abort(STATUS_UNPROCESSABLE)
     
     @app.route('/categories', methods=['POST'])
@@ -258,7 +253,12 @@ def create_app(test_config=None):
 
                 questions_query = question_query.all()
                 result = list(map(Question.format, questions_query))
-                return format_result(result)
+                if (len(result)):
+                    data = result[0]
+                    return format_result(data)
+                else:
+                    data = None
+                    return format_result(data)
             abort(STATUS_NOT_FOUND)
         abort(STATUS_UNPROCESSABLE)
 
