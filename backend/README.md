@@ -112,6 +112,8 @@ GET '/categories'
 
 ```
 
+#### Add a new category
+
 ```
 POST '/categories'
 ```
@@ -320,11 +322,52 @@ GET /categories/<int:category_id>/questions?page=<page_number>
 }
 ```
 
+### Quiz
+
+#### Get the quiz list
+
+```
+/quizzes
+```
+
+- Gives the data object which has the current question, the corresponding answer to it based on the 
+category we have chosen
+
+- Request Body:
+```
+{
+    "quiz_category": {
+        "id": "1"
+    },
+    "previous_questions": [1]
+}
+```
+- quiz_category: the category which we want questions from
+- previous_questions: contains the list of questions which we already played
+- Result:
+```
+{
+    "data": {
+        "answer": "The Liver",
+        "category_id": 1,
+        "difficulty": 4,
+        "id": 16,
+        "question": "What is the heaviest organ in the human body?"
+    },
+    "status_code": 200,
+    "success": true
+}
+```
+
+## Error Codes
+
+Currently it supports 404 and 422 error codes
+
 ## Testing
 To run the tests, run
 ```
-dropdb trivia_test
-createdb trivia_test
+dropdb trivia_test -U postgres
+createdb trivia_test -U postgres
 psql trivia_test < trivia.psql
 python test_flaskr.py
 ```
