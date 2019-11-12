@@ -77,18 +77,89 @@ POST ...
 DELETE ...
 
 GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+- Fetches a list of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+- Returns: An list with a single entity, categories, that contains a object of id: category_string type:value pairs. 
+[
+    {
+        "id": 1,
+        "type": "Science"
+    },
+    {
+        "id": 2,
+        "type": "Art"
+    },
+    {
+        "id": 3,
+        "type": "Geography"
+    },
+    {
+        "id": 4,
+        "type": "History"
+    },
+    {
+        "id": 5,
+        "type": "Entertainment"
+    },
+    {
+        "id": 6,
+        "type": "Sports"
+    }
+]
 
 ```
 
+```
+POST '/categories'
+```
+- Adds a new category into the category list.
+- Request Body: 
+ ```
+{
+    "category_type": "category3"
+}
+```
+- Returns the newly added category and its ID
+```
+{
+    "data": {
+        "id": 4,
+        "type": "category3"
+    },
+    "statusCode": 200,
+    "success": true
+}
+```
+
+
+```
+POST '/questions'
+```
+- Takes in request body arguments and adds a new question to the existing list.
+- Request Body:
+```
+{
+	"question": "Which dung beetle was worshipped by the ancient Egyptians?",
+	"answer": "Scarab",
+	"difficulty": "4",
+	"category_id": "4"
+}
+```
+- Returns the data object of the newly inserted question
+```
+{
+    "data": {
+        "answer": "Scarab",
+        "category_id": 4,
+        "difficulty": 4,
+        "id": 19,
+        "question": "Which dung beetle was worshipped by the ancient Egyptians?"
+    },
+    "status_code": 200,
+    "success": true,
+    "total_count": 1
+}
+```
 
 ## Testing
 To run the tests, run
