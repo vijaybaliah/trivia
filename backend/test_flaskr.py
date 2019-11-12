@@ -15,7 +15,7 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia_test"
-        self.database_path = "postgres://{}:{}@{}/{}".format('postgres', 'password', 'localhost:5432', self.database_name)
+        self.database_path = "postgres://{}:{}@{}/{}".format('vijay', 'password', 'localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
         self.code_success = 200
         self.code_not_found = 404
@@ -51,7 +51,7 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get('/questions')
         data = self.format_response(res)
         self.assertDictEqual(data['data']['categories'][0], 
-            {'id': 1, 'type': 'category1'}
+            {'id': 1, 'type': 'Science'}
         )
         self.assertEqual(res.status_code, self.code_success)
         self.assertTrue(data['success'])
