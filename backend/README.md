@@ -67,6 +67,9 @@ One note before you delve into your tasks: for each endpoint you are expected to
 9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
 
 REVIEW_COMMENT
+
+### Categories
+
 ```
 This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
 
@@ -130,7 +133,9 @@ POST '/categories'
     "success": true
 }
 ```
+### Questions
 
+#### Adding a new question
 
 ```
 POST '/questions'
@@ -158,6 +163,160 @@ POST '/questions'
     "status_code": 200,
     "success": true,
     "total_count": 1
+}
+```
+
+#### Get the list of question
+
+```
+GET /questions?page=<page_number>
+```
+- It gives the list of questions. Each entry object has a question, answer, difficulty and its
+ corresponding category id
+- Request Arguments:
+```
+?page=1
+```
+- returns the questions list and category list as well
+```
+{
+    "data": {
+        "categories": [
+            {
+                "id": 1,
+                "type": "category1"
+            },
+            {
+                "id": 2,
+                "type": "category2"
+            },
+            {
+                "id": 3,
+                "type": "category3"
+            },
+            {
+                "id": 4,
+                "type": "category3"
+            }
+        ],
+        "questions": [
+            {
+                "answer": "run",
+                "category_id": 1,
+                "difficulty": 1,
+                "id": 1,
+                "question": "question 1"
+            }
+        ]
+    },
+    "status_code": 200,
+    "success": true,
+    "total_count": 1
+}
+```
+
+#### Delete a question
+
+```
+DELETE /questions/<int:question_id>
+```
+- It deletes the question from the given list based on qquestion id
+- Request Params:
+```
+/questions/1
+```
+- It returns the data object of the question deleted
+```
+{
+    "data": {
+        "category_id": 4,
+        "difficulty": 4,
+        "id": 19,
+        "question": "Which dung beetle was worshipped by the ancient Egyptians?"
+    },
+    "status_code": 200,
+    "success": true
+}
+```
+
+#### Search question 
+
+```
+POST /questions/search?page=<page_number>
+```
+- It performs partial text match and returns the list of questions matching.
+- Request Argument:
+```
+/questions/search?page=1
+```
+- Request Body:
+```
+{
+	"search_term": "ques"
+}
+```
+- Returns the list of questions matching each entry has the same format as the get questions list request
+except for the category list.
+```
+{
+    "data": [
+        {
+            "answer": "run",
+            "category_id": 1,
+            "difficulty": 1,
+            "id": 1,
+            "question": "question 1"
+        }
+    ],
+    "status_code": 200,
+    "success": true,
+    "total_count": 1
+}
+```
+
+#### Get questions by category Id
+
+```
+GET /categories/<int:category_id>/questions?page=<page_number>
+```
+- It gives the list of questions that belongs to the particular category id
+- Request Argument:
+```
+?page=1
+```
+- Request Params:
+```
+/categories/1/questions
+```
+- Returns the list of questions, each entity has an answer, question, difficulty and a category id
+```
+{
+    "data": [
+        {
+            "answer": "The Liver",
+            "category_id": 1,
+            "difficulty": 4,
+            "id": 16,
+            "question": "What is the heaviest organ in the human body?"
+        },
+        {
+            "answer": "Alexander Fleming",
+            "category_id": 1,
+            "difficulty": 3,
+            "id": 17,
+            "question": "Who discovered penicillin?"
+        },
+        {
+            "answer": "Blood",
+            "category_id": 1,
+            "difficulty": 4,
+            "id": 18,
+            "question": "Hematology is a branch of medicine involving the study of what?"
+        }
+    ],
+    "status_code": 200,
+    "success": true,
+    "total_count": 3
 }
 ```
 
