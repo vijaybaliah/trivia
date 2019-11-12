@@ -12,7 +12,7 @@ class QuestionView extends Component {
       questions: [],
       page: 1,
       totalQuestions: 0,
-      categories: {},
+      categories: [],
       currentCategory: null,
     }
   }
@@ -26,10 +26,13 @@ class QuestionView extends Component {
       url: `/questions?page=${this.state.page}`, //TODO: update request URL
       type: "GET",
       success: (result) => {
+        const categories = result.data.categories.reduce((acc, cur) => {
+          return Object.assign({}, acc, {[cur.id]: cur.type })
+         }, {})
         this.setState({
-          questions: result.questions,
+          questions: result.data.questions,
           totalQuestions: result.total_questions,
-          categories: result.categories,
+          categories: categories,
           currentCategory: result.current_category })
         return;
       },
@@ -64,8 +67,8 @@ class QuestionView extends Component {
       type: "GET",
       success: (result) => {
         this.setState({
-          questions: result.questions,
-          totalQuestions: result.total_questions,
+          questions: result.data,
+          totalQuestions: result.total_count,
           currentCategory: result.current_category })
         return;
       },
@@ -78,19 +81,19 @@ class QuestionView extends Component {
 
   submitSearch = (searchTerm) => {
     $.ajax({
-      url: `/questions`, //TODO: update request URL
+      url: `/questions/search`, //TODO: update request URL
       type: "POST",
       dataType: 'json',
       contentType: 'application/json',
-      data: JSON.stringify({searchTerm: searchTerm}),
+      data: JSON.stringify({search_term: searchTerm}),
       xhrFields: {
         withCredentials: true
       },
       crossDomain: true,
       success: (result) => {
         this.setState({
-          questions: result.questions,
-          totalQuestions: result.total_questions,
+          questions: result.data,
+          totalQuestions: result.total_count,
           currentCategory: result.current_category })
         return;
       },
@@ -141,7 +144,7 @@ class QuestionView extends Component {
               key={q.id}
               question={q.question}
               answer={q.answer}
-              category={this.state.categories[q.category]} 
+              category={this.state.categories[q.category_id]} 
               difficulty={q.difficulty}
               questionAction={this.questionAction(q.id)}
             />
