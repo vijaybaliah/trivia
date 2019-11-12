@@ -267,6 +267,15 @@ def create_app(test_config=None):
     Create error handlers for all expected errors 
     including 404 and 422. 
     '''
+    @app.errorhandler(400)
+    def bad_request(error):
+        error_data = {
+            "success": False,
+            "status_code": 400,
+            "message": "Bad request error"
+        }
+        return jsonify(error_data), 400
+    
     @app.errorhandler(404)
     def not_found(error):
         error_data = {
@@ -284,6 +293,15 @@ def create_app(test_config=None):
             "message": "Request unprocessable"
         }
         return jsonify(error_data), STATUS_UNPROCESSABLE
+
+    @app.errorhandler(500)
+    def internal_server(error):
+        error_data = {
+            "success": False,
+            "status_code": 500,
+            "message": "Internal Server error"
+        }
+        return jsonify(error_data), 500
 
     with app.app_context():
         db = SQLAlchemy()
