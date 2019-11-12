@@ -81,14 +81,17 @@ def create_app(test_config=None):
     def add_category():
         if request.data:
             category_data = get_request_data(request)
-            category_object = Category(type=category_data['category_type'])
-            Category.insert(category_object)
-            res = Category.format(category_object)
-            data = {
-                "id": res['id'],
-                "type": res['type']
-            }
-            return format_result(data)
+            if 'category_type' in category_data:
+                category_object = Category(type=category_data['category_type'])
+                Category.insert(category_object)
+                res = Category.format(category_object)
+                data = {
+                    "id": res['id'],
+                    "type": res['type']
+                }
+                return format_result(data)
+            else:
+                abort(STATUS_NOT_FOUND)
         abort(STATUS_UNPROCESSABLE)
 
     '''
@@ -126,8 +129,8 @@ def create_app(test_config=None):
     '''
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_question(question_id):
-        try:
-            question_object = Question.query.get(question_id)
+        question_object = Question.query.get(question_id)
+        if question_object:
             Question.delete(question_object)
             res = Question.format(question_object)
             data = {
@@ -137,9 +140,7 @@ def create_app(test_config=None):
                 "category_id": res['category_id']
             }
             return format_result(data)
-        except Exception as e:
-            print('delete_question: ', e)
-            abort(STATUS_UNPROCESSABLE)
+        abort(STATUS_NOT_FOUND)
     '''
     @TODO: 
     Create an endpoint to POST a new question, 
@@ -176,7 +177,7 @@ def create_app(test_config=None):
                 total_count = 1
                 return format_result(data, total_count)
             else:
-                abort(STATUS_UNPROCESSABLE)
+                abort(STATUS_NOT_FOUND)
         abort(STATUS_UNPROCESSABLE)
     '''
     @TODO: 
@@ -201,7 +202,7 @@ def create_app(test_config=None):
                 total_count = paginated_query.total
                 return format_result(questions, total_count)
             else:
-                abort(STATUS_UNPROCESSABLE)
+                abort(STATUS_NOT_FOUND)
         abort(STATUS_UNPROCESSABLE)
 
 
@@ -215,15 +216,18 @@ def create_app(test_config=None):
     '''
     @app.route('/categories/<int:category_id>/questions')
     def get_questions_by_category_id(category_id):
-        questions_query = Category.query.get(category_id).questions
-        questions = list(map(Question.format, questions_query))
-        page = request.args.get('page', 1, type=int)
-        start = (page - 1) * PER_PAGE
-        end = start + PER_PAGE
-        data = questions[start:end]
-        if len(data):
-            total_count = len(questions)
-            return format_result(data, total_count)
+        questions_query = Category.query.get(category_id)
+        if questions_query:
+            questions_query = questions_query.questions
+            questions = list(map(Question.format, questions_query))
+            page = request.args.get('page', 1, type=int)
+            start = (page - 1) * PER_PAGE
+            end = start + PER_PAGE
+            data = questions[start:end]
+            if len(data):
+                total_count = len(questions)
+                return format_result(data, total_count)
+            abort(STATUS_NOT_FOUND)
         abort(STATUS_NOT_FOUND)
 
 
@@ -240,20 +244,22 @@ def create_app(test_config=None):
     '''
     @app.route('/quizzes', methods=['POST'])
     def get_quiz_question():
-        request_data = get_request_data(request)
-        if 'previous_questions' in request_data and 'quiz_category'in request_data:
-            previous_questions = request_data['previous_questions']
-            quiz_category = request_data['quiz_category']
-            question_query = Question.query
+        if (request.data):
+            request_data = get_request_data(request)
+            if 'previous_questions' in request_data and 'quiz_category'in request_data:
+                previous_questions = request_data['previous_questions']
+                quiz_category = request_data['quiz_category']
+                question_query = Question.query
 
-            if len(previous_questions):
-                question_query = question_query.filter(Question.id.notin_(previous_questions))
-            if 'id' in quiz_category:
-                question_query = question_query.filter(Question.category_id==quiz_category['id'])
+                if len(previous_questions):
+                    question_query = question_query.filter(Question.id.notin_(previous_questions))
+                if 'id' in quiz_category:
+                    question_query = question_query.filter(Question.category_id==quiz_category['id'])
 
-            questions_query = question_query.all()
-            result = list(map(Question.format, questions_query))
-            return format_result(result)
+                questions_query = question_query.all()
+                result = list(map(Question.format, questions_query))
+                return format_result(result)
+            abort(STATUS_NOT_FOUND)
         abort(STATUS_UNPROCESSABLE)
 
     '''
