@@ -248,7 +248,7 @@ def create_app(test_config=None):
 
                 if len(previous_questions):
                     question_query = question_query.filter(Question.id.notin_(previous_questions))
-                if 'id' in quiz_category:
+                if 'id' in quiz_category and int(quiz_category['id']) > 0:
                     question_query = question_query.filter(Question.category_id==quiz_category['id'])
 
                 questions_query = question_query.all()
