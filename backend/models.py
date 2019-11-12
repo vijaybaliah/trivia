@@ -5,7 +5,7 @@ from flask_migrate import Migrate
 import json
 
 database_name = "trivia"
-database_path = "postgres://{}:{}@{}/{}".format('vijay', 'password', 'localhost:5432', database_name)
+database_path = "postgres://{}:{}@{}/{}".format('postgres', 'password', 'localhost:5432', database_name)
 
 convention = {
     "ix": 'ix_%(column_0_label)s',
